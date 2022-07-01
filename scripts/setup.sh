@@ -26,6 +26,10 @@ else
   echo "CACHE_DATABASE_PORT=6379" >> backend/.env
 fi
 
+# Save user account and password to dotenv file for nodemailer
+echo "NODEMAILER_USER=\"\"" >> backend/.env
+echo "NODEMAILER_PASS=\"\"" >> backend/.env
+
 # Use docker-compose profile
 if [ -z $DEVCONTAINER ]
 then
