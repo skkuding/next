@@ -46,6 +46,7 @@ importers:
       '@types/node': ^16.11.45
       '@types/passport-jwt': ^3.0.6
       '@types/passport-local': ^1.0.34
+      '@types/nodemailer': ^6.4.4
       '@types/supertest': ^2.0.12
       argon2: ^0.28.7
       cache-manager: ^4.1.0
@@ -57,6 +58,7 @@ importers:
       passport: ^0.6.0
       passport-jwt: ^4.0.0
       passport-local: ^1.0.0
+      nodemailer: ^6.7.5
       prisma: ^3.15.2
       reflect-metadata: ^0.1.13
       rimraf: ^3.0.2
@@ -85,6 +87,7 @@ importers:
       passport: 0.6.0
       passport-jwt: 4.0.0
       passport-local: 1.0.0
+      nodemailer: 6.7.5
       reflect-metadata: 0.1.13
       rimraf: 3.0.2
       rxjs: 7.5.6
@@ -98,6 +101,7 @@ importers:
       '@types/node': 16.11.45
       '@types/passport-jwt': 3.0.6
       '@types/passport-local': 1.0.34
+      '@types/nodemailer': 6.4.4
       '@types/supertest': 2.0.12
       jest: 27.5.1_ts-node@10.9.1
       prisma: 3.15.2
@@ -1390,6 +1394,12 @@ packages:
 
   /@types/node/8.10.66:
     resolution: {integrity: sha512-tktOkFUA4kXx2hhhrB8bIFb5TbwzS4uOhKEmwiD+NoiL0qtP2OQ9mFldbgD4dV1djrlBYP6eBuQZiWjuHUpqFw==}
+    dev: true
+
+  /@types/nodemailer/6.4.4:
+    resolution: {integrity: sha512-Ksw4t7iliXeYGvIQcSIgWQ5BLuC/mljIEbjf615svhZL10PE9t+ei8O9gDaD3FPCasUJn9KTLwz2JFJyiiyuqw==}
+    dependencies:
+      '@types/node': 16.11.26
     dev: true
 
   /@types/parse-json/4.0.0:
@@ -5460,6 +5470,11 @@ packages:
       abbrev: 1.1.1
     dev: false
 
+  /nodemailer/6.7.5:
+    resolution: {integrity: sha512-6VtMpwhsrixq1HDYSBBHvW0GwiWawE75dS3oal48VqRhUvKJNnKnJo2RI/bCVQubj1vgrgscMNW4DHaD6xtMCg==}
+    engines: {node: '>=6.0.0'}
+    dev: false
+
   /normalize-path/3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
@@ -6211,6 +6226,11 @@ packages:
       ajv: 6.12.6
       ajv-keywords: 3.5.2_ajv@6.12.6
     dev: true
+
+  /semver/5.7.1:
+    resolution: {integrity: sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==}
+    hasBin: true
+    dev: false
 
   /semver/5.7.1:
     resolution: {integrity: sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==}
