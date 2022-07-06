@@ -28,6 +28,7 @@ export class UserService {
       where: { username }
     })
   }
+
   async sendEmail(email: string, html: string): Promise<void> {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
