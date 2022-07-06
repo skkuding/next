@@ -8,7 +8,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('/password/reset')
-  sendPwResetEmail(@Body() body: PwResetEmailDto) {
+  sendPwResetEmail(@Body() body: PwResetEmailDto): Promise<string> {
     const email: string = body.email
     return this.userService.sendPwResetEmail(email)
   }
@@ -18,7 +18,7 @@ export class UserController {
     @Body() body: NewPwDto,
     @Param('userId', ParseIntPipe) userId: number,
     @Param('resetToken') resetToken: string
-  ) {
+  ): Promise<string> {
     const newPassword: string = body.newPassword
     return this.userService.updatePassword(userId, resetToken, newPassword)
   }
