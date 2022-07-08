@@ -10,7 +10,7 @@ export class UserController {
   @Post('/password/reset')
   sendPwResetEmail(@Body() body: PwResetEmailDto): Promise<string> {
     const email: string = body.email
-    return this.userService.sendPwResetEmail(email)
+    return this.userService.sendPwResetToken(email)
   }
 
   @Patch('/:userId/password/reset/:resetToken')
