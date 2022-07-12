@@ -11,6 +11,7 @@ import {
   Post,
   Req,
   UnprocessableEntityException,
+  UnauthorizedException,
   UseGuards
 } from '@nestjs/common'
 import { ContestService } from './contest.service'
@@ -95,6 +96,17 @@ export class ContestAdminController {
     @Req() req: AuthenticatedRequest,
     @Param('id', ParseIntPipe) contestId: number
   ): Promise<Partial<Contest>> {
-    return await this.contestService.getAdminContestById(req.user.id, contestId)
+    try {
+      const contests = await this.contestService.getAdminContestById(
+        req.user.id,
+        contestId
+      )
+      return contests
+    } catch (error) {
+      if (error instanceof EntityNotExistException) {
+        throw new NotFoundException(error.message)
+      }
+      throw new UnauthorizedException(error.message)
+    }
   }
 }

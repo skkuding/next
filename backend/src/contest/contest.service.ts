@@ -1,11 +1,8 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException
-} from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Contest } from '@prisma/client'
 import {
   EntityNotExistException,
+  InvalidUserException,
   UnprocessableDataException
 } from 'src/common/exception/business.exception'
 import { PrismaService } from 'src/prisma/prisma.service'
@@ -165,7 +162,7 @@ export class ContestService {
       select: contestListselectOption
     })
     if (!contest) {
-      throw new NotFoundException()
+      throw new EntityNotExistException(`contest ${contest_id}`)
     }
     const isUserInGroup = await this.prisma.userGroup.findFirst({
       where: { user_id, group_id: contest.group_id },
@@ -175,7 +172,9 @@ export class ContestService {
       (!isUserInGroup && contest.end_time > new Date()) ||
       (contest.visible == false && isUserInGroup.is_group_manager == false)
     ) {
-      throw new BadRequestException()
+      throw new InvalidUserException(
+        `Contest ${contest_id} is not allowed to user ${user_id}`
+      )
     }
     return contest
   }
@@ -186,7 +185,7 @@ export class ContestService {
       where: { id: group_id }
     })
     if (!group) {
-      throw new NotFoundException()
+      throw new EntityNotExistException(`group ${group_id}`)
     }
     return await this.prisma.userGroup.findFirst({
       where: { user_id, group_id, is_registered: true },
@@ -220,31 +219,40 @@ export class ContestService {
     user_id: number,
     contest_id: number
   ): Promise<Partial<Contest>> {
-    // Todo: 뒤에서 contest db 너무 들고오길래 처음에 contest id만 가져와서 확인하게 해둠
-    const groupId = await this.prisma.contest.findUnique({
+    // 뒤에서 contest db 너무 들고오길래 처음에 contest id만 가져와서 확인하게 해둠
+    const contestGroupId = await this.prisma.contest.findUnique({
       where: { id: contest_id },
       select: { group_id: true }
     })
 
+    if (!contestGroupId) {
+      throw new EntityNotExistException(`contest ${contest_id}`)
+    }
     const isUserInGroup = await this.prisma.userGroup.findFirst({
-      where: { user_id, group_id: groupId.group_id, is_group_manager: true },
+      where: {
+        user_id,
+        group_id: contestGroupId.group_id,
+        is_group_manager: true
+      },
       select: { is_group_manager: true }
     })
     if (!isUserInGroup) {
-      throw new BadRequestException()
+      throw new InvalidUserException(
+        `Contest ${contest_id} is not allowed to user ${user_id}`
+      )
     }
 
     const contest = await this.prisma.contest.findUnique({
       where: { id: contest_id },
       select: {
         title: true,
-        // Todo: notice list (display id)
+        // Todo: notice list (add display id)
         ContestNotice: {
           select: {
             id: true,
             title: true,
             update_time: true
-            //display ID가 뭐야
+            //display_id: true
           }
         },
         // problem list
@@ -255,11 +263,11 @@ export class ContestService {
             }
           }
         },
-        // Todo: submission (student id)
+        // Todo: submission list (add student id)
         Submission: {
           select: {
             create_time: true, // submission time
-            user: true, // user : {select: {student_id:true}}, // student_id 왜 erd에만 있냐
+            user: true, // user : {select: {student_id:true}}
             problem: {
               select: { title: true, source: true }
             },
@@ -269,9 +277,6 @@ export class ContestService {
         }
       }
     })
-    if (!contest) {
-      throw new NotFoundException()
-    }
     return contest
   }
 }

@@ -1,14 +1,17 @@
 import {
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Req,
+  UnauthorizedException,
   UseGuards
 } from '@nestjs/common'
 import { Contest } from '@prisma/client'
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard'
 import { AuthenticatedRequest } from 'src/auth/interface/authenticated-request.interface'
+import { EntityNotExistException } from 'src/common/exception/business.exception'
 import { ContestService } from './contest.service'
 
 @Controller('contest')
@@ -36,7 +39,18 @@ export class ContestController {
     @Req() req: AuthenticatedRequest,
     @Param('id', ParseIntPipe) contestId: number
   ): Promise<Partial<Contest>> {
-    return await this.contestService.getContestById(req.user.id, contestId)
+    try {
+      const contests = await this.contestService.getContestById(
+        req.user.id,
+        contestId
+      )
+      return contests
+    } catch (error) {
+      if (error instanceof EntityNotExistException) {
+        throw new NotFoundException(error.message)
+      }
+      throw new UnauthorizedException(error.message)
+    }
   }
 }
 
@@ -50,6 +64,14 @@ export class ContestGroupController {
     @Req() req: AuthenticatedRequest,
     @Param('id', ParseIntPipe) groupId: number
   ) {
-    return await this.contestService.getContestsByGroupId(req.user.id, groupId)
+    try {
+      const contests = await this.contestService.getContestsByGroupId(
+        req.user.id,
+        groupId
+      )
+      return contests
+    } catch (error) {
+      throw new NotFoundException(error.message)
+    }
   }
 }
