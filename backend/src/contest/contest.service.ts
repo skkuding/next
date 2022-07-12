@@ -129,14 +129,14 @@ export class ContestService {
   }
 
   /* public */
-  async getOngoingList(): Promise<Partial<Contest>[]> {
+  async getOngoingContests(): Promise<Partial<Contest>[]> {
     const allContest = await this.prisma.contest.findMany(
       userContestListPageOption
     )
     return this.filterOngoing(allContest)
   }
 
-  async getUpcomingList(): Promise<Partial<Contest>[]> {
+  async getUpcomingContests(): Promise<Partial<Contest>[]> {
     const allContest = await this.prisma.contest.findMany(
       userContestListPageOption
     )
@@ -146,7 +146,7 @@ export class ContestService {
     return returnContest
   }
 
-  async getFinishedList(): Promise<Partial<Contest>[]> {
+  async getFinishedContests(): Promise<Partial<Contest>[]> {
     const allContest = await this.prisma.contest.findMany(
       userContestListPageOption
     )
@@ -156,7 +156,7 @@ export class ContestService {
     return returnContest
   }
   // Todo: check select option
-  async getDetailById(
+  async getContestById(
     user_id: number,
     contest_id: number
   ): Promise<Partial<Contest>> {
@@ -181,7 +181,7 @@ export class ContestService {
   }
 
   /* group */
-  async getListByGroupId(user_id: number, group_id: number) {
+  async getContestsByGroupId(user_id: number, group_id: number) {
     const group = await this.prisma.group.findUnique({
       where: { id: group_id }
     })
@@ -204,19 +204,19 @@ export class ContestService {
   }
 
   /* admin */
-  async getAdminList(user_id: number) {
+  async getAdminContests(user_id: number) {
     return await this.prisma.userGroup.findFirst({
       where: { user_id, is_group_manager: true },
       select: { group: { select: { group_name: true, Contest: true } } }
     })
   }
-  async getAdminOngoingList(user_id: number) {
-    const allContest = await this.getAdminList(user_id)
+  async getAdminOngoingContests(user_id: number) {
+    const allContest = await this.getAdminContests(user_id)
     return this.filterOngoing(allContest)
   }
 
   // Todo: check select option
-  async getAdminDetailById(
+  async getAdminContestById(
     user_id: number,
     contest_id: number
   ): Promise<Partial<Contest>> {
@@ -259,7 +259,7 @@ export class ContestService {
         Submission: {
           select: {
             create_time: true, // submission time
-            user: true, // user : {select: {student_id:true}} student_id 왜 erd에만 있냐
+            user: true, // user : {select: {student_id:true}}, // student_id 왜 erd에만 있냐
             problem: {
               select: { title: true, source: true }
             },

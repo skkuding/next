@@ -1,5 +1,6 @@
-import { Controller, Get, Param, ParseIntPipe, Req } from '@nestjs/common'
+import { Controller, Get, Param, ParseIntPipe, Req, UseGuards } from '@nestjs/common'
 import { Contest } from '@prisma/client'
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard'
 import { ContestService } from './contest.service'
 
 @Controller('contest')
@@ -7,28 +8,28 @@ export class ContestController {
   constructor(private readonly contestService: ContestService) {}
 
   @Get('ongoing')
-  async getOngoingList(): Promise<Partial<Contest>[]> {
-    return await this.contestService.getOngoingList()
+  async getOngoingContests(): Promise<Partial<Contest>[]> {
+    return await this.contestService.getOngoingContests()
   }
 
   @Get('upcoming')
-  async getUpcomingList(): Promise<Partial<Contest>[]> {
-    return await this.contestService.getUpcomingList()
+  async getUpcomingContests(): Promise<Partial<Contest>[]> {
+    return await this.contestService.getUpcomingContests()
   }
 
   @Get('finished')
-  async getFinishedList(): Promise<Partial<Contest>[]> {
-    return await this.contestService.getFinishedList()
+  async getFinishedContests(): Promise<Partial<Contest>[]> {
+    return await this.contestService.getFinishedContests()
   }
 
   @Get(':id')
-  // Todo: add guard
-  async getDetailById(
+  @UseGuards(JwtAuthGuard)
+  async getContestById(
     @Req() req,
     @Param('id', ParseIntPipe) contestId: number
   ): Promise<Partial<Contest>> {
     const userId = req.body.user.id
-    return await this.contestService.getDetailById(userId, contestId)
+    return await this.contestService.getContestById(userId, contestId)
   }
 }
 
@@ -36,13 +37,13 @@ export class ContestController {
 export class ContestGroupController {
   constructor(private readonly contestService: ContestService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  // Todo: add guard
-  async getListByGroupId(
+  async getContestsByGroupId(
     @Req() req,
     @Param('id', ParseIntPipe) groupId: number
   ) {
     const userId = req.body.user.id
-    return await this.contestService.getListByGroupId(userId, groupId)
+    return await this.contestService.getContestsByGroupId(userId, groupId)
   }
 }
