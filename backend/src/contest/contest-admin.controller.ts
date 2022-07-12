@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   InternalServerErrorException,
   NotFoundException,
   Param,
@@ -72,5 +73,28 @@ export class ContestAdminController {
       }
       throw new InternalServerErrorException()
     }
+  }
+
+  /* group admin page */
+  @Get()
+  async getAdminList(@Req() req) {
+    const userId = req.body.user.id
+    return await this.contestService.getAdminList(userId)
+  }
+
+  @Get('ongoing')
+  async getAdminOngoingList(@Req() req) {
+    const userId = req.body.user.id
+    return await this.contestService.getAdminOngoingList(userId)
+  }
+
+  @Get(':id')
+  // Todo: add guard
+  async getAdminDetailById(
+    @Req() req,
+    @Param('id', ParseIntPipe) contestId: number
+  ): Promise<Partial<Contest>> {
+    const userId = req.body.user.id
+    return await this.contestService.getAdminDetailById(userId, contestId)
   }
 }

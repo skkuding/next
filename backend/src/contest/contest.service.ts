@@ -128,30 +128,15 @@ export class ContestService {
     return ongoingContest
   }
 
-  /* group admin page */
-  async getAllAdminContest(user_id: number) {
-    return await this.prisma.userGroup.findFirst({
-      where: { user_id, is_group_manager: true },
-      select: { group: { include: { Contest: true } } }
-    })
-  }
-
-  async getAdminOngoing(user_id: number) {
-    const allContest = await this.getAllAdminContest(user_id)
-    return this.filterOngoing(allContest)
-  }
-
-  /* User Page */
-
-  /* contest list page */
-  async getOngoing(): Promise<Partial<Contest>[]> {
+  /* public */
+  async getOngoingList(): Promise<Partial<Contest>[]> {
     const allContest = await this.prisma.contest.findMany(
       userContestListPageOption
     )
     return this.filterOngoing(allContest)
   }
 
-  async getUpcoming(): Promise<Partial<Contest>[]> {
+  async getUpcomingList(): Promise<Partial<Contest>[]> {
     const allContest = await this.prisma.contest.findMany(
       userContestListPageOption
     )
@@ -161,7 +146,7 @@ export class ContestService {
     return returnContest
   }
 
-  async getFinished(): Promise<Partial<Contest>[]> {
+  async getFinishedList(): Promise<Partial<Contest>[]> {
     const allContest = await this.prisma.contest.findMany(
       userContestListPageOption
     )
@@ -170,8 +155,33 @@ export class ContestService {
     )
     return returnContest
   }
+  // Todo: check select option
+  async getDetailById(
+    user_id: number,
+    contest_id: number
+  ): Promise<Partial<Contest>> {
+    const contest = await this.prisma.contest.findUnique({
+      where: { id: contest_id },
+      select: contestListselectOption
+    })
+    if (!contest) {
+      throw new NotFoundException()
+    }
+    const isUserInGroup = await this.prisma.userGroup.findFirst({
+      where: { user_id, group_id: contest.group_id },
+      select: { is_group_manager: true }
+    })
+    if (
+      (!isUserInGroup && contest.end_time > new Date()) ||
+      (contest.visible == false && isUserInGroup.is_group_manager == false)
+    ) {
+      throw new BadRequestException()
+    }
+    return contest
+  }
 
-  async findByGroupId(user_id: number, group_id: number) {
+  /* group */
+  async getListByGroupId(user_id: number, group_id: number) {
     const group = await this.prisma.group.findUnique({
       where: { id: group_id }
     })
@@ -193,27 +203,74 @@ export class ContestService {
     })
   }
 
-  /* contest detail page */
-  async findByContestId(
+  /* admin */
+  async getAdminList(user_id: number) {
+    return await this.prisma.userGroup.findFirst({
+      where: { user_id, is_group_manager: true },
+      select: { group: { select: { group_name: true, Contest: true } } }
+    })
+  }
+  async getAdminOngoingList(user_id: number) {
+    const allContest = await this.getAdminList(user_id)
+    return this.filterOngoing(allContest)
+  }
+
+  // Todo: check select option
+  async getAdminDetailById(
     user_id: number,
     contest_id: number
   ): Promise<Partial<Contest>> {
+    // Todo: contest id만 가져와서 확인하는거 괜찮 ..나?  뒤에서 contest db 너무 돌고오는데
+    const groupId = await this.prisma.contest.findUnique({
+      where: { id: contest_id },
+      select: { group_id: true }
+    })
+
+    const isUserInGroup = await this.prisma.userGroup.findFirst({
+      where: { user_id, group_id: groupId.group_id, is_group_manager: true },
+      select: { is_group_manager: true }
+    })
+    if (!isUserInGroup) {
+      throw new BadRequestException()
+    }
+
     const contest = await this.prisma.contest.findUnique({
       where: { id: contest_id },
-      select: contestListselectOption
+      select: {
+        title: true,
+        // Todo: notice list (display id)
+        ContestNotice: {
+          select: {
+            id: true,
+            title: true,
+            update_time: true
+            //display ID가 뭐야
+          }
+        },
+        // problem list
+        ContestProblem: {
+          select: {
+            problem: {
+              select: { title: true, difficulty: true, update_time: true }
+            }
+          }
+        },
+        // Todo: submission (student id)
+        Submission: {
+          select: {
+            create_time: true, // submission time
+            user: true, // user : {select: {student_id:true}} student_id 왜 erd에만 있냐
+            problem: {
+              select: { title: true, source: true }
+            },
+            language: true,
+            SubmissionResult: true
+          }
+        }
+      }
     })
     if (!contest) {
       throw new NotFoundException()
-    }
-    const isUserInGroup = await this.prisma.userGroup.findFirst({
-      where: { user_id, group_id: contest.group_id },
-      select: { is_group_manager: true }
-    })
-    if (
-      (!isUserInGroup && contest.end_time > new Date()) ||
-      (contest.visible == false && isUserInGroup.is_group_manager == false)
-    ) {
-      throw new BadRequestException()
     }
     return contest
   }
