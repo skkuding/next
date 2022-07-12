@@ -2,53 +2,47 @@ import { Controller, Get, Param, ParseIntPipe, Req } from '@nestjs/common'
 import { Contest } from '@prisma/client'
 import { ContestService } from './contest.service'
 
-@Controller()
+@Controller('contest')
 export class ContestController {
   constructor(private readonly contestService: ContestService) {}
 
-  /* group admin page */
-  @Get('admin')
-  async getAllAdminContest(@Req() req) {
-    const userId = req.body.user.id
-    return await this.contestService.getAllAdminContest(userId)
-  }
-
-  @Get('admin/ongoing')
-  async getAdminOngoing(@Req() req) {
-    const userId = req.body.user.id
-    return await this.contestService.getAdminOngoing(userId)
-  }
-
-  /* User Page */
-  /* contest list page */
   @Get('ongoing')
-  async getOngoing(): Promise<Partial<Contest>[]> {
-    return await this.contestService.getOngoing()
+  async getOngoingList(): Promise<Partial<Contest>[]> {
+    return await this.contestService.getOngoingList()
   }
 
   @Get('upcoming')
-  async getUpcoming(): Promise<Partial<Contest>[]> {
-    return await this.contestService.getUpcoming()
+  async getUpcomingList(): Promise<Partial<Contest>[]> {
+    return await this.contestService.getUpcomingList()
   }
 
   @Get('finished')
-  async getFinished(): Promise<Partial<Contest>[]> {
-    return await this.contestService.getFinished()
+  async getFinishedList(): Promise<Partial<Contest>[]> {
+    return await this.contestService.getFinishedList()
   }
 
-  @Get('group/:id')
-  async findByGroupId(@Req() req, @Param('id', ParseIntPipe) groupId: number) {
-    const userId = req.body.user.id
-    return await this.contestService.findByGroupId(userId, groupId)
-  }
-
-  /* contest detail page */
   @Get(':id')
-  async findByContestId(
+  // Todo: add guard
+  async getDetailById(
     @Req() req,
     @Param('id', ParseIntPipe) contestId: number
   ): Promise<Partial<Contest>> {
     const userId = req.body.user.id
-    return await this.contestService.findByContestId(userId, contestId)
+    return await this.contestService.getDetailById(userId, contestId)
+  }
+}
+
+@Controller('contest/group')
+export class ContestGroupController {
+  constructor(private readonly contestService: ContestService) {}
+
+  @Get(':id')
+  // Todo: add guard
+  async getListByGroupId(
+    @Req() req,
+    @Param('id', ParseIntPipe) groupId: number
+  ) {
+    const userId = req.body.user.id
+    return await this.contestService.getListByGroupId(userId, groupId)
   }
 }
