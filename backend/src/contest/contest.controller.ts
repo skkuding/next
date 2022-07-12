@@ -1,6 +1,14 @@
-import { Controller, Get, Param, ParseIntPipe, Req, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Req,
+  UseGuards
+} from '@nestjs/common'
 import { Contest } from '@prisma/client'
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard'
+import { AuthenticatedRequest } from 'src/auth/interface/authenticated-request.interface'
 import { ContestService } from './contest.service'
 
 @Controller('contest')
@@ -22,14 +30,13 @@ export class ContestController {
     return await this.contestService.getFinishedContests()
   }
 
-  @Get(':id')
   @UseGuards(JwtAuthGuard)
+  @Get(':id')
   async getContestById(
-    @Req() req,
+    @Req() req: AuthenticatedRequest,
     @Param('id', ParseIntPipe) contestId: number
   ): Promise<Partial<Contest>> {
-    const userId = req.body.user.id
-    return await this.contestService.getContestById(userId, contestId)
+    return await this.contestService.getContestById(req.user.id, contestId)
   }
 }
 
@@ -40,10 +47,9 @@ export class ContestGroupController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getContestsByGroupId(
-    @Req() req,
+    @Req() req: AuthenticatedRequest,
     @Param('id', ParseIntPipe) groupId: number
   ) {
-    const userId = req.body.user.id
-    return await this.contestService.getContestsByGroupId(userId, groupId)
+    return await this.contestService.getContestsByGroupId(req.user.id, groupId)
   }
 }

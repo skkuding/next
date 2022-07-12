@@ -220,7 +220,7 @@ export class ContestService {
     user_id: number,
     contest_id: number
   ): Promise<Partial<Contest>> {
-    // Todo: contest id만 가져와서 확인하는거 괜찮 ..나?  뒤에서 contest db 너무 돌고오는데
+    // Todo: 뒤에서 contest db 너무 들고오길래 처음에 contest id만 가져와서 확인하게 해둠
     const groupId = await this.prisma.contest.findUnique({
       where: { id: contest_id },
       select: { group_id: true }
