@@ -165,7 +165,7 @@ export class ContestService {
       throw new EntityNotExistException(`contest ${contest_id}`)
     }
     const isUserInGroup = await this.prisma.userGroup.findFirst({
-      where: { user_id, group_id: contest.group_id },
+      where: { user_id, group_id: contest.group_id, is_registered: true },
       select: { is_group_manager: true }
     })
     if (
@@ -252,7 +252,7 @@ export class ContestService {
             id: true,
             title: true,
             update_time: true
-            //display_id: true
+            //,display_id: true
           }
         },
         // problem list
@@ -266,7 +266,7 @@ export class ContestService {
         // Todo: submission list (add student id)
         Submission: {
           select: {
-            create_time: true, // submission time
+            create_time: true, // == submission time
             user: true, // user : {select: {student_id:true}}
             problem: {
               select: { title: true, source: true }
