@@ -1,5 +1,6 @@
 import {
   Controller,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -50,7 +51,7 @@ export class ContestController {
       if (error instanceof EntityNotExistException) {
         throw new NotFoundException(error.message)
       }
-      throw new UnauthorizedException(error.message)
+      throw new ForbiddenException(error.message)
     }
   }
 

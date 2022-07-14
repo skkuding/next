@@ -11,8 +11,8 @@ import {
   Post,
   Req,
   UnprocessableEntityException,
-  UnauthorizedException,
-  UseGuards
+  UseGuards,
+  ForbiddenException
 } from '@nestjs/common'
 import { ContestService } from './contest.service'
 import { CreateContestDto } from './dto/create-contest.dto'
@@ -106,7 +106,7 @@ export class ContestAdminController {
       if (error instanceof EntityNotExistException) {
         throw new NotFoundException(error.message)
       }
-      throw new UnauthorizedException(error.message)
+      throw new ForbiddenException(error.message)
     }
   }
 }
