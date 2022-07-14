@@ -14,27 +14,28 @@ import { AuthenticatedRequest } from 'src/auth/interface/authenticated-request.i
 import { EntityNotExistException } from 'src/common/exception/business.exception'
 import { ContestService } from './contest.service'
 
-@Controller('contest')
+@Controller('')
 export class ContestController {
   constructor(private readonly contestService: ContestService) {}
 
-  @Get('ongoing')
+  /* public */
+  @Get('contest/ongoing')
   async getOngoingContests(): Promise<Partial<Contest>[]> {
     return await this.contestService.getOngoingContests()
   }
 
-  @Get('upcoming')
+  @Get('contest/upcoming')
   async getUpcomingContests(): Promise<Partial<Contest>[]> {
     return await this.contestService.getUpcomingContests()
   }
 
-  @Get('finished')
+  @Get('contest/finished')
   async getFinishedContests(): Promise<Partial<Contest>[]> {
     return await this.contestService.getFinishedContests()
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':id')
+  @Get('contest/:id')
   async getContestById(
     @Req() req: AuthenticatedRequest,
     @Param('id', ParseIntPipe) contestId: number
@@ -52,14 +53,10 @@ export class ContestController {
       throw new UnauthorizedException(error.message)
     }
   }
-}
 
-@Controller('contest/group')
-export class ContestGroupController {
-  constructor(private readonly contestService: ContestService) {}
-
+  /* group */
   @UseGuards(JwtAuthGuard)
-  @Get(':id')
+  @Get('group/:id/contest')
   async getContestsByGroupId(
     @Req() req: AuthenticatedRequest,
     @Param('id', ParseIntPipe) groupId: number
