@@ -21,3 +21,6 @@ export class EntityNotExistException extends BusinessException {
 }
 
 export class UnprocessableDataException extends BusinessException {}
+export class InvalidMailTransporterException extends BusinessException {}
+
+export class InvalidTokenException extends BusinessException {}
