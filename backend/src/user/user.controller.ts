@@ -18,14 +18,14 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('/password/reset')
-  sendPwResetEmail(@Body() userEmailDto: UserEmailDto): Promise<string> {
+  createTokenAndSendEmail(@Body() userEmailDto: UserEmailDto): Promise<string> {
     try {
-      return this.userService.sendPwResetToken(userEmailDto)
+      return this.userService.createTokenAndSendEmail(userEmailDto)
     } catch (error) {
       if (error instanceof InvalidUserException) {
         throw new UnauthorizedException(error.message)
       } else {
-        throw new InternalServerErrorException('mail transfer failed')
+        throw new InternalServerErrorException()
       }
     }
   }
