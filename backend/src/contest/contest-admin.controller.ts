@@ -77,17 +77,28 @@ export class ContestAdminController {
   }
 
   /* group admin page */
-  @Get()
   @UseGuards(JwtAuthGuard)
-  async getAdminContests(@Req() req) {
-    const userId = req.body.user.id
-    return await this.contestService.getAdminContests(userId)
+  @Get()
+  async getAdminContests(@Req() req: AuthenticatedRequest) {
+    try {
+      const contests = await this.contestService.getAdminContests(req.user.id)
+      return contests
+    } catch (error) {
+      throw new ForbiddenException(error.message)
+    }
   }
 
   @Get('ongoing')
   @UseGuards(JwtAuthGuard)
   async getAdminOngoingContests(@Req() req: AuthenticatedRequest) {
-    return await this.contestService.getAdminOngoingContests(req.user.id)
+    try {
+      const contests = await this.contestService.getAdminOngoingContests(
+        req.user.id
+      )
+      return contests
+    } catch (error) {
+      throw new ForbiddenException(error.message)
+    }
   }
 
   @Get(':id')
