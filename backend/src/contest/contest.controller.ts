@@ -69,7 +69,10 @@ export class ContestController {
       )
       return contests
     } catch (error) {
-      throw new NotFoundException(error.message)
+      if (error instanceof EntityNotExistException) {
+        throw new NotFoundException(error.message)
+      }
+      throw new ForbiddenException(error.message)
     }
   }
 }

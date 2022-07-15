@@ -152,7 +152,7 @@ export class ContestService {
     )
     return returnContest
   }
-  // Todo: check select option
+
   async getContestById(
     user_id: number,
     contest_id: number
@@ -187,28 +187,52 @@ export class ContestService {
     if (!group) {
       throw new EntityNotExistException(`group ${group_id}`)
     }
+    const isUserInGroup = await this.prisma.userGroup.findFirst({
+      where: { user_id, group_id, is_registered: true }
+    })
+    if (!isUserInGroup) {
+      throw new InvalidUserException(
+        `User ${user_id} is not in Group ${group_id}`
+      )
+    }
+    return await this.prisma.contest.findMany({
+      where: { group_id, visible: true },
+      select: contestListselectOption
+    })
+
+    // return await this.prisma.userGroup.findFirst({
+    //   where: { user_id, group_id, is_registered: true },
+    //   select: {
+    //     group: {
+    //       select: {
+    //         Contest: {
+    //           where: { group_id, visible: true },
+    //           select: contestListselectOption
+    //         }
+    //       }
+    //     }
+    //   }
+    // })
+  }
+
+  /* admin */
+  async getAdminContests(user_id: number) {
     return await this.prisma.userGroup.findFirst({
-      where: { user_id, group_id, is_registered: true },
+      where: {
+        user_id,
+        is_group_manager: true
+      },
       select: {
         group: {
           select: {
-            Contest: {
-              where: { group_id, visible: true },
-              select: contestListselectOption
-            }
+            group_name: true,
+            Contest: true
           }
         }
       }
     })
   }
 
-  /* admin */
-  async getAdminContests(user_id: number) {
-    return await this.prisma.userGroup.findFirst({
-      where: { user_id, is_group_manager: true },
-      select: { group: { select: { group_name: true, Contest: true } } }
-    })
-  }
   async getAdminOngoingContests(user_id: number) {
     const allContest = await this.getAdminContests(user_id)
     return this.filterOngoing(allContest)
