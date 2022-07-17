@@ -8,6 +8,7 @@ import { UserEmailDto } from './userEmail.dto'
 import { NewPwDto } from './newPw.dto'
 import { User } from '@prisma/client'
 import {
+  EmailTransmissionFailedException,
   InvalidTokenException,
   InvalidUserException
 } from 'src/common/exception/business.exception'
@@ -70,7 +71,15 @@ export class UserService {
 
     const token: string = randomBytes(24).toString('base64url')
 
-    await this.emailService.sendPasswordResetLink(email, user.id, token)
+    const sentEmailInfo = await this.emailService.sendPasswordResetLink(
+      email,
+      user.id,
+      token
+    )
+
+    if (sentEmailInfo.accepted.length === 0) {
+      throw new EmailTransmissionFailedException('Email transmission failed')
+    }
 
     await this.createTokenInCache(pwResetTokenCacheKey(user.id), token, 300)
 

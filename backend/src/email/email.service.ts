@@ -1,5 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer'
 import { Injectable } from '@nestjs/common'
+import { SentMessageInfo } from 'nodemailer'
 
 @Injectable()
 export class EmailService {
@@ -9,8 +10,8 @@ export class EmailService {
     email: string,
     userId: number,
     token: string
-  ): Promise<void> {
-    await this.mailerService.sendMail({
+  ): Promise<SentMessageInfo> {
+    return await this.mailerService.sendMail({
       to: email,
       subject: `Reset your password`,
       html: `<div>If you want to reset your password, Click the link.</div>
