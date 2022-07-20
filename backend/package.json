@@ -47,7 +47,7 @@
     "@types/passport-jwt": "^3.0.6",
     "@types/passport-local": "^1.0.34",
     "@types/supertest": "^2.0.12",
-    "jest": "^27.5.1",
+    "jest": "^27.0.0",
     "prisma": "^3.15.2",
     "source-map-support": "^0.5.21",
     "supertest": "^6.2.4",
@@ -77,5 +77,8 @@
       "node_modules",
       "."
     ]
+  },
+  "peerDependencies": {
+    "jest": "^27.0.0"
   }
 }
