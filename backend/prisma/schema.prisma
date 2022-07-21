@@ -46,8 +46,7 @@ model UserProfile {
   id          Int      @id @default(autoincrement())
   user        User     @relation(fields: [user_id], references: [id])
   user_id     Int      @unique
-  real_name   String?
-  major       String?
+  real_name   String
   create_time DateTime @default(now())
   update_time DateTime @updatedAt
 
