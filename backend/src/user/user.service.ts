@@ -3,7 +3,7 @@ import { Cache } from 'cache-manager'
 import { randomBytes } from 'crypto'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { encrypt } from 'src/common/hash'
-import { pwResetTokenCacheKey } from 'src/common/cache/keys'
+import { passwordResetTokenCacheKey } from 'src/common/cache/keys'
 import { UserEmailDto } from './userEmail.dto'
 import { NewPwDto } from './newPw.dto'
 import { User } from '@prisma/client'
@@ -59,7 +59,11 @@ export class UserService {
       token
     )
 
-    await this.createTokenInCache(pwResetTokenCacheKey(user.id), token, 300)
+    await this.createTokenInCache(
+      passwordResetTokenCacheKey(user.id),
+      token,
+      300
+    )
 
     return 'Password reset link was sent to your email'
   }
@@ -82,7 +86,7 @@ export class UserService {
     { newPassword }: NewPwDto
   ): Promise<string> {
     const storedResetToken: string = await this.getTokenFromCache(
-      pwResetTokenCacheKey(userId)
+      passwordResetTokenCacheKey(userId)
     )
 
     if (!storedResetToken || resetToken !== storedResetToken) {
@@ -94,7 +98,7 @@ export class UserService {
       newPassword
     )
 
-    await this.deleteTokenFromCache(pwResetTokenCacheKey(userId))
+    await this.deleteTokenFromCache(passwordResetTokenCacheKey(userId))
 
     return 'Password Reset successfully'
   }

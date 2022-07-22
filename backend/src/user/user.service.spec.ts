@@ -3,7 +3,7 @@ import { CACHE_MANAGER } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { User } from '@prisma/client'
 import { Cache } from 'cache-manager'
-import { pwResetTokenCacheKey } from 'src/common/cache/keys'
+import { passwordResetTokenCacheKey } from 'src/common/cache/keys'
 import {
   InvalidTokenException,
   InvalidUserException
@@ -20,8 +20,8 @@ describe('UserService', () => {
 
   const USER_ID = 1
   const EMAIL_ADDRESS = 'email@email.com'
-  const PW_RESET_TOKEN_KEY = pwResetTokenCacheKey(USER_ID)
-  const PW_RESET_TOKEN = 'thisIsPwResetToken'
+  const PASSWORD_RESET_TOKEN_KEY = passwordResetTokenCacheKey(USER_ID)
+  const PASSWORD_RESET_TOKEN = 'thisIsPwResetToken'
   const TIME_TO_LIVE = 300
   const NEW_PASSWORD = 'thisISNewPassword'
 
@@ -29,7 +29,7 @@ describe('UserService', () => {
     sendMail: jest.fn()
   }
   const cacheMock = {
-    get: jest.fn().mockReturnValueOnce(PW_RESET_TOKEN),
+    get: jest.fn().mockReturnValueOnce(PASSWORD_RESET_TOKEN),
     set: jest.fn(),
     del: jest.fn()
   }
@@ -78,33 +78,33 @@ describe('UserService', () => {
   })
 
   it('get token', async () => {
-    const ret = await userService.getTokenFromCache(PW_RESET_TOKEN_KEY)
+    const ret = await userService.getTokenFromCache(PASSWORD_RESET_TOKEN_KEY)
 
-    expect(ret).toEqual(PW_RESET_TOKEN)
+    expect(ret).toEqual(PASSWORD_RESET_TOKEN)
   })
 
   it('set token', async () => {
     const spy = jest.spyOn(cache, 'set')
 
     await userService.createTokenInCache(
-      PW_RESET_TOKEN_KEY,
-      PW_RESET_TOKEN,
+      PASSWORD_RESET_TOKEN_KEY,
+      PASSWORD_RESET_TOKEN,
       TIME_TO_LIVE
     )
 
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy.mock.calls[0][0]).toBe(PW_RESET_TOKEN_KEY)
-    expect(spy.mock.calls[0][1]).toBe(PW_RESET_TOKEN)
+    expect(spy.mock.calls[0][0]).toBe(PASSWORD_RESET_TOKEN_KEY)
+    expect(spy.mock.calls[0][1]).toBe(PASSWORD_RESET_TOKEN)
     expect(spy.mock.calls[0][2]).toEqual({ ttl: TIME_TO_LIVE })
   })
 
   it('delete token', async () => {
     const spy = jest.spyOn(cache, 'del')
 
-    await userService.deleteTokenFromCache(PW_RESET_TOKEN_KEY)
+    await userService.deleteTokenFromCache(PASSWORD_RESET_TOKEN_KEY)
 
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy.mock.calls[0][0]).toBe(PW_RESET_TOKEN_KEY)
+    expect(spy.mock.calls[0][0]).toBe(PASSWORD_RESET_TOKEN_KEY)
   })
 
   describe('create a password reset token and send it to given email', () => {
@@ -153,13 +153,13 @@ describe('UserService', () => {
       userService.updateUserPasswordInPrisma = jest.fn()
       userService.getTokenFromCache = jest
         .fn()
-        .mockReturnValueOnce(Promise.resolve(PW_RESET_TOKEN))
+        .mockReturnValueOnce(Promise.resolve(PASSWORD_RESET_TOKEN))
     })
 
     it('token is valid', async () => {
       const returnMessage = await userService.updatePassword(
         1,
-        PW_RESET_TOKEN,
+        PASSWORD_RESET_TOKEN,
         {
           newPassword: NEW_PASSWORD
         }
@@ -174,13 +174,13 @@ describe('UserService', () => {
         .mockReturnValueOnce(null)
 
       expect(async () => {
-        await userService.updatePassword(USER_ID, PW_RESET_TOKEN, {
+        await userService.updatePassword(USER_ID, PASSWORD_RESET_TOKEN, {
           newPassword: NEW_PASSWORD
         })
       }).rejects.toThrowError(InvalidTokenException)
 
       expect(async () => {
-        await userService.updatePassword(USER_ID, PW_RESET_TOKEN, {
+        await userService.updatePassword(USER_ID, PASSWORD_RESET_TOKEN, {
           newPassword: NEW_PASSWORD
         })
       }).rejects.toThrowError(InvalidTokenException)
@@ -188,12 +188,12 @@ describe('UserService', () => {
 
     it('check if deleteToken function is called', async () => {
       const deleteTokenSpy = jest.spyOn(userService, 'deleteTokenFromCache')
-      await userService.updatePassword(USER_ID, PW_RESET_TOKEN, {
+      await userService.updatePassword(USER_ID, PASSWORD_RESET_TOKEN, {
         newPassword: NEW_PASSWORD
       })
       expect(deleteTokenSpy).toHaveBeenCalledTimes(1)
       expect(deleteTokenSpy.mock.calls[0][0]).toBe(
-        pwResetTokenCacheKey(USER_ID)
+        passwordResetTokenCacheKey(USER_ID)
       )
     })
 
@@ -202,7 +202,7 @@ describe('UserService', () => {
         userService,
         'updateUserPasswordInPrisma'
       )
-      await userService.updatePassword(USER_ID, PW_RESET_TOKEN, {
+      await userService.updatePassword(USER_ID, PASSWORD_RESET_TOKEN, {
         newPassword: NEW_PASSWORD
       })
       expect(updatePasswordInPrismaSpy).toHaveBeenCalledTimes(1)
