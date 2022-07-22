@@ -108,18 +108,12 @@ describe('UserService', () => {
   })
 
   describe('create a password reset token and send it to given email', () => {
-    let getUserCredentialByEmailSpy
-    let sendMailSpy
     let sendPasswordResetLinkSpy
 
     beforeEach(() => {
-      getUserCredentialByEmailSpy = jest
-        .spyOn(userService, 'getUserCredentialByEmail')
-        .mockResolvedValue(user)
+      userService.getUserCredentialByEmail = jest.fn().mockResolvedValue(user)
 
-      sendMailSpy = jest
-        .spyOn(mailer, 'sendMail')
-        .mockResolvedValue(expectedEmailInfo)
+      mailer.sendMail = jest.fn().mockResolvedValue(expectedEmailInfo)
 
       sendPasswordResetLinkSpy = jest
         .spyOn(emailService, 'sendPasswordResetLink')
@@ -127,8 +121,8 @@ describe('UserService', () => {
     })
 
     it('check if user email exist (Non-Exist)', async () => {
-      getUserCredentialByEmailSpy = jest
-        .spyOn(userService, 'getUserCredentialByEmail')
+      userService.getUserCredentialByEmail = jest
+        .fn()
         .mockReturnValueOnce(Promise.resolve(null))
       expect(async () => {
         await userService.createTokenAndSendEmail({ email: EMAIL_ADDRESS })

@@ -53,11 +53,7 @@ export class UserService {
 
     const token = this.createBase64UrlEncodedTokenRandomly(24)
 
-    const sentEmailInfo = await this.emailService.sendPasswordResetLink(
-      email,
-      user.id,
-      token
-    )
+    await this.emailService.sendPasswordResetLink(email, user.id, token)
 
     await this.createTokenInCache(
       passwordResetTokenCacheKey(user.id),
@@ -93,10 +89,7 @@ export class UserService {
       throw new InvalidTokenException('Token not found or invalid token')
     }
 
-    const updatedUser = await this.updateUserPasswordInPrisma(
-      userId,
-      newPassword
-    )
+    await this.updateUserPasswordInPrisma(userId, newPassword)
 
     await this.deleteTokenFromCache(passwordResetTokenCacheKey(userId))
 
