@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { encrypt } from 'src/common/hash'
 import { passwordResetTokenCacheKey } from 'src/common/cache/keys'
 import { UserEmailDto } from './userEmail.dto'
-import { NewPwDto } from './newPw.dto'
+import { NewPasswordDto } from './newPassword.dto'
 import { User } from '@prisma/client'
 import {
   InvalidTokenException,
@@ -79,7 +79,7 @@ export class UserService {
   async updatePassword(
     userId: number,
     resetToken: string,
-    { newPassword }: NewPwDto
+    { newPassword }: NewPasswordDto
   ): Promise<string> {
     const storedResetToken: string = await this.getTokenFromCache(
       passwordResetTokenCacheKey(userId)

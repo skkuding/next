@@ -21,7 +21,7 @@ describe('UserService', () => {
   const USER_ID = 1
   const EMAIL_ADDRESS = 'email@email.com'
   const PASSWORD_RESET_TOKEN_KEY = passwordResetTokenCacheKey(USER_ID)
-  const PASSWORD_RESET_TOKEN = 'thisIsPwResetToken'
+  const PASSWORD_RESET_TOKEN = 'thisIsPasswordResetToken'
   const TIME_TO_LIVE = 300
   const NEW_PASSWORD = 'thisISNewPassword'
 
