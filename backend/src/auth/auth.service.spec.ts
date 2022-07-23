@@ -16,6 +16,8 @@ import {
   InvalidJwtTokenException,
   InvalidUserException
 } from 'src/common/exception/business.exception'
+import { EmailService } from 'src/email/email.service'
+import { MailerService } from '@nestjs-modules/mailer'
 
 describe('AuthService', () => {
   let service: AuthService
@@ -42,9 +44,11 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         UserService,
+        EmailService,
         { provide: PrismaService, useValue: {} },
         { provide: ConfigService, useValue: {} },
         { provide: JwtService, useValue: {} },
+        { provide: MailerService, useValue: {} },
         {
           provide: CACHE_MANAGER,
           useFactory: () => ({
