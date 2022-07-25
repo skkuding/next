@@ -101,23 +101,23 @@ export class ContestAdminController {
     }
   }
 
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  async getAdminContestById(
-    @Req() req: AuthenticatedRequest,
-    @Param('id', ParseIntPipe) contestId: number
-  ): Promise<Partial<Contest>> {
-    try {
-      const contests = await this.contestService.getAdminContestById(
-        req.user.id,
-        contestId
-      )
-      return contests
-    } catch (error) {
-      if (error instanceof EntityNotExistException) {
-        throw new NotFoundException(error.message)
-      }
-      throw new ForbiddenException(error.message)
-    }
-  }
+  // @Get(':id')
+  // @UseGuards(JwtAuthGuard)
+  // async getAdminContestById(
+  //   @Req() req: AuthenticatedRequest,
+  //   @Param('id', ParseIntPipe) contestId: number
+  // ): Promise<Partial<Contest>> {
+  //   try {
+  //     const contests = await this.contestService.getAdminContestById(
+  //       req.user.id,
+  //       contestId
+  //     )
+  //     return contests
+  //   } catch (error) {
+  //     if (error instanceof EntityNotExistException) {
+  //       throw new NotFoundException(error.message)
+  //     }
+  //     throw new ForbiddenException(error.message)
+  //   }
+  // }
 }

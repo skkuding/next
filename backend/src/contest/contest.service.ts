@@ -9,6 +9,10 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { CreateContestDto } from './dto/create-contest.dto'
 import { UpdateContestDto } from './dto/update-contest.dto'
 
+function returnTextIsNotAllowed(user_id: number, contest_id: number): string {
+  return returnTextIsNotAllowed(user_id, contest_id)
+}
+
 const contestListselectOption = {
   id: true,
   title: true,
@@ -173,7 +177,7 @@ export class ContestService {
       (contest.visible == false && isUserInGroup.is_group_manager == false)
     ) {
       throw new InvalidUserException(
-        `Contest ${contest_id} is not allowed to user ${user_id}`
+        returnTextIsNotAllowed(user_id, contest_id)
       )
     }
     return contest
@@ -199,20 +203,6 @@ export class ContestService {
       where: { group_id, visible: true },
       select: contestListselectOption
     })
-
-    // return await this.prisma.userGroup.findFirst({
-    //   where: { user_id, group_id, is_registered: true },
-    //   select: {
-    //     group: {
-    //       select: {
-    //         Contest: {
-    //           where: { group_id, visible: true },
-    //           select: contestListselectOption
-    //         }
-    //       }
-    //     }
-    //   }
-    // })
   }
 
   /* admin */
@@ -248,69 +238,69 @@ export class ContestService {
     return result
   }
 
-  // Todo: check select option
-  async getAdminContestById(
-    user_id: number,
-    contest_id: number
-  ): Promise<Partial<Contest>> {
-    // 뒤에서 contest db 너무 들고오길래 처음에 contest id만 가져와서 확인하게 해둠
-    const contestGroupId = await this.prisma.contest.findUnique({
-      where: { id: contest_id },
-      select: { group_id: true }
-    })
+  // // Todo: check select option
+  // async getAdminContestById(
+  //   user_id: number,
+  //   contest_id: number
+  // ): Promise<Partial<Contest>> {
+  //   // 뒤에서 contest db 너무 들고오길래 처음에 contest id만 가져와서 확인하게 해둠
+  //   const contestGroupId = await this.prisma.contest.findUnique({
+  //     where: { id: contest_id },
+  //     select: { group_id: true }
+  //   })
 
-    if (!contestGroupId) {
-      throw new EntityNotExistException(`contest ${contest_id}`)
-    }
-    const isUserInGroup = await this.prisma.userGroup.findFirst({
-      where: {
-        user_id,
-        group_id: contestGroupId.group_id,
-        is_group_manager: true
-      },
-      select: { is_group_manager: true }
-    })
-    if (!isUserInGroup) {
-      throw new InvalidUserException(
-        `Contest ${contest_id} is not allowed to user ${user_id}`
-      )
-    }
+  //   if (!contestGroupId) {
+  //     throw new EntityNotExistException(`contest ${contest_id}`)
+  //   }
+  //   const isUserInGroup = await this.prisma.userGroup.findFirst({
+  //     where: {
+  //       user_id,
+  //       group_id: contestGroupId.group_id,
+  //       is_group_manager: true
+  //     },
+  //     select: { is_group_manager: true }
+  //   })
+  //   if (!isUserInGroup) {
+  //     throw new InvalidUserException(
+  //       returnTextIsNotAllowed(user_id, contest_id)
+  //     )
+  //   }
 
-    const contest = await this.prisma.contest.findUnique({
-      where: { id: contest_id },
-      select: {
-        title: true,
-        // Todo: notice list (add display id)
-        ContestNotice: {
-          select: {
-            id: true,
-            title: true,
-            update_time: true
-            //,display_id: true
-          }
-        },
-        // problem list
-        ContestProblem: {
-          select: {
-            problem: {
-              select: { title: true, difficulty: true, update_time: true }
-            }
-          }
-        },
-        // Todo: submission list (add student id)
-        Submission: {
-          select: {
-            create_time: true, // == submission time
-            user: true, // user : {select: {student_id:true}}
-            problem: {
-              select: { title: true, source: true }
-            },
-            language: true,
-            SubmissionResult: true
-          }
-        }
-      }
-    })
-    return contest
-  }
+  //   const contest = await this.prisma.contest.findUnique({
+  //     where: { id: contest_id },
+  //     select: {
+  //       title: true,
+  //       // Todo: notice list (add display id)
+  //       ContestNotice: {
+  //         select: {
+  //           id: true,
+  //           title: true,
+  //           update_time: true
+  //           //,display_id: true
+  //         }
+  //       },
+  //       // problem list
+  //       ContestProblem: {
+  //         select: {
+  //           problem: {
+  //             select: { title: true, difficulty: true, update_time: true }
+  //           }
+  //         }
+  //       },
+  //       // Todo: submission list (add student id)
+  //       Submission: {
+  //         select: {
+  //           create_time: true, // == submission time
+  //           user: true, // user : {select: {student_id:true}}
+  //           problem: {
+  //             select: { title: true, source: true }
+  //           },
+  //           language: true,
+  //           SubmissionResult: true
+  //         }
+  //       }
+  //     }
+  //   })
+  //   return contest
+  // }
 }
