@@ -3,12 +3,14 @@ import {
   Controller,
   Get,
   InternalServerErrorException,
+  Patch,
   Post,
   Req,
   UnauthorizedException,
   UnprocessableEntityException,
   UseGuards
 } from '@nestjs/common'
+import { UserProfile } from '@prisma/client'
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard'
 import { AuthenticatedRequest } from 'src/auth/interface/authenticated-request.interface'
 import {
@@ -18,6 +20,7 @@ import {
 } from 'src/common/exception/business.exception'
 import { GetUserProfileDto } from './dto/get-userprofile.dto'
 import { SignUpDto } from './dto/sign-up.dto'
+import { UpdateUserRealNameDto } from './dto/update-user-realname.dto'
 import { WithdrawalDto } from './dto/withdrawal.dto'
 import { UserService } from './user.service'
 
@@ -67,6 +70,25 @@ export class UserController {
   ): Promise<GetUserProfileDto> {
     try {
       return await this.userService.getUserProfile(req.user.username)
+    } catch (error) {
+      if (error instanceof EntityNotExistException) {
+        throw new UnauthorizedException(error.message)
+      }
+      throw new InternalServerErrorException()
+    }
+  }
+
+  @Patch()
+  @UseGuards(JwtAuthGuard)
+  async updateUserRealName(
+    @Req() req: AuthenticatedRequest,
+    @Body() updateUserRealNameDto: UpdateUserRealNameDto
+  ): Promise<UserProfile> {
+    try {
+      return await this.userService.updateUserRealName(
+        req.user.id,
+        updateUserRealNameDto
+      )
     } catch (error) {
       if (error instanceof EntityNotExistException) {
         throw new UnauthorizedException(error.message)

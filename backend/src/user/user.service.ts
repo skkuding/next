@@ -14,6 +14,7 @@ import { UserGroupData } from 'src/group/interface/user-group-data.interface'
 import { WithdrawalDto } from './dto/withdrawal.dto'
 import { AuthService } from 'src/auth/auth.service'
 import { GetUserProfileDto } from './dto/get-userprofile.dto'
+import { UpdateUserRealNameDto } from './dto/update-user-realname.dto'
 
 @Injectable()
 export class UserService {
@@ -149,5 +150,27 @@ export class UserService {
     }
 
     return userProfile
+  }
+
+  //TODO: implement update email
+
+  async updateUserRealName(
+    userId: number,
+    updateUserRealNameDto: UpdateUserRealNameDto
+  ): Promise<UserProfile> {
+    const userProfile = await this.prisma.userProfile.findUnique({
+      where: { user_id: userId }
+    })
+
+    if (!userProfile) {
+      throw new EntityNotExistException('UserProfile')
+    }
+
+    return await this.prisma.userProfile.update({
+      where: { user_id: userId },
+      data: {
+        real_name: updateUserRealNameDto.real_name
+      }
+    })
   }
 }
