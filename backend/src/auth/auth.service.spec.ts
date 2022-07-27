@@ -16,6 +16,7 @@ import {
   InvalidJwtTokenException,
   InvalidUserException
 } from 'src/common/exception/business.exception'
+import { GroupService } from 'src/group/group.service'
 
 describe('AuthService', () => {
   let service: AuthService
@@ -31,7 +32,6 @@ describe('AuthService', () => {
     password: VALID_PASSWORD,
     role: 'User',
     email: '',
-    has_email_authenticated: false,
     last_login: undefined,
     create_time: undefined,
     update_time: undefined
@@ -42,6 +42,7 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         UserService,
+        { provide: GroupService, useValue: {} },
         { provide: PrismaService, useValue: {} },
         { provide: ConfigService, useValue: {} },
         { provide: JwtService, useValue: {} },
