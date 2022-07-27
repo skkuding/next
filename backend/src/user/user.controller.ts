@@ -1,8 +1,8 @@
 import {
   Body,
   Controller,
+  Get,
   InternalServerErrorException,
-  NotFoundException,
   Post,
   Req,
   UnauthorizedException,
@@ -16,6 +16,7 @@ import {
   InvalidUserException,
   UnprocessableDataException
 } from 'src/common/exception/business.exception'
+import { GetUserProfileDto } from './dto/get-userprofile.dto'
 import { SignUpDto } from './dto/sign-up.dto'
 import { WithdrawalDto } from './dto/withdrawal.dto'
 import { UserService } from './user.service'
@@ -48,14 +49,28 @@ export class UserController {
       await this.userService.withdrawal(req.user.username, withdrawalDto)
       return
     } catch (error) {
-      if (error instanceof InvalidUserException) {
+      if (
+        error instanceof InvalidUserException ||
+        error instanceof EntityNotExistException
+      ) {
         throw new UnauthorizedException(error.message)
       }
 
-      if (error instanceof EntityNotExistException) {
-        throw new NotFoundException(error.message)
-      }
+      throw new InternalServerErrorException()
+    }
+  }
 
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async getUserProfile(
+    @Req() req: AuthenticatedRequest
+  ): Promise<GetUserProfileDto> {
+    try {
+      return await this.userService.getUserProfile(req.user.username)
+    } catch (error) {
+      if (error instanceof EntityNotExistException) {
+        throw new UnauthorizedException(error.message)
+      }
       throw new InternalServerErrorException()
     }
   }
