@@ -34,7 +34,9 @@
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.5.6"
+    "rxjs": "^7.5.6",
+    "test": "^3.1.0",
+    "ts-jest": "^27.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.2.8",
@@ -47,11 +49,10 @@
     "@types/passport-jwt": "^3.0.6",
     "@types/passport-local": "^1.0.34",
     "@types/supertest": "^2.0.12",
-    "jest": "^27.5.1",
+    "jest": "27.5.1",
     "prisma": "^3.15.2",
     "source-map-support": "^0.5.21",
     "supertest": "^6.2.4",
-    "ts-jest": "^27.1.5",
     "ts-loader": "^9.3.1",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^3.14.1",
@@ -77,5 +78,8 @@
       "node_modules",
       "."
     ]
+  },
+  "peerDependencies": {
+    "jest": "^27.0.0"
   }
 }
