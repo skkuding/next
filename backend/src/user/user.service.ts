@@ -8,7 +8,7 @@ import {
 } from 'src/common/exception/business.exception'
 import { User, UserProfile } from '@prisma/client'
 import { encrypt } from 'src/common/hash'
-import { UserProfileData } from './interface/user-profile-data.interface'
+import { CreateUserProfileData } from './interface/create-userprofile.interface'
 import { GroupService } from 'src/group/group.service'
 import { UserGroupData } from 'src/group/interface/user-group-data.interface'
 import { WithdrawalDto } from './dto/withdrawal.dto'
@@ -45,13 +45,11 @@ export class UserService {
     }
 
     const user = await this.createUser(signUpDto)
-
-    const userProfileData: UserProfileData = {
+    const CreateUserProfileData: CreateUserProfileData = {
       user_id: user.id,
       real_name: signUpDto.real_name
     }
-    await this.createUserProfile(userProfileData)
-
+    await this.createUserProfile(CreateUserProfileData)
     await this.registerUserToPublicGroup(user.id)
 
     return user
@@ -71,13 +69,13 @@ export class UserService {
   }
 
   async createUserProfile(
-    userProfileData: UserProfileData
+    CreateUserProfileData: CreateUserProfileData
   ): Promise<UserProfile> {
     return await this.prisma.userProfile.create({
       data: {
-        real_name: userProfileData.real_name,
+        real_name: CreateUserProfileData.real_name,
         user: {
-          connect: { id: userProfileData.user_id }
+          connect: { id: CreateUserProfileData.user_id }
         }
       }
     })
