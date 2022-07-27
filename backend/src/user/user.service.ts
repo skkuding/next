@@ -25,8 +25,8 @@ export class UserService {
     private readonly authService: AuthService
   ) {}
 
-  async getUserRole(userId: number) {
-    return this.prisma.user.findUnique({
+  async getUserRole(userId: number): Promise<Partial<User>> {
+    return await this.prisma.user.findUnique({
       where: { id: userId },
       select: {
         role: true
@@ -37,7 +37,7 @@ export class UserService {
   async signUp(signUpDto: SignUpDto): Promise<User> {
     // TODO: 인증된 Email인지 확인 Cache or JWT
 
-    const duplicatedUser = await this.prisma.user.findUnique({
+    const duplicatedUser: User = await this.prisma.user.findUnique({
       where: {
         username: signUpDto.username
       }
@@ -47,7 +47,7 @@ export class UserService {
       throw new UnprocessableDataException('Username already exists')
     }
 
-    const user = await this.createUser(signUpDto)
+    const user: User = await this.createUser(signUpDto)
     const CreateUserProfileData: CreateUserProfileData = {
       user_id: user.id,
       real_name: signUpDto.real_name
@@ -95,7 +95,7 @@ export class UserService {
   }
 
   async withdrawal(username: string, withdrawalDto: WithdrawalDto) {
-    const user = await this.getUserCredential(username)
+    const user: User = await this.getUserCredential(username)
 
     if (!(await this.authService.isValidUser(user, withdrawalDto.password))) {
       throw new InvalidUserException('Incorrect password')
@@ -104,14 +104,14 @@ export class UserService {
     this.deleteUser(username)
   }
 
-  async getUserCredential(username: string) {
-    return this.prisma.user.findUnique({
+  async getUserCredential(username: string): Promise<User> {
+    return await this.prisma.user.findUnique({
       where: { username }
     })
   }
 
   async deleteUser(username: string) {
-    const user = await this.prisma.user.findUnique({
+    const user: User = await this.prisma.user.findUnique({
       where: {
         username
       }
