@@ -18,15 +18,14 @@ enum Role {
 }
 
 model User {
-  id                      Int      @id @default(autoincrement())
-  username                String   @unique
-  password                String
-  role                    Role     @default(User)
-  email                   String   @unique
-  has_email_authenticated Boolean  @default(false)
-  last_login              DateTime
-  create_time             DateTime @default(now())
-  update_time             DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  username    String   @unique
+  password    String
+  role        Role     @default(User)
+  email       String   @unique
+  last_login  DateTime
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
 
   UserProfile    UserProfile?
   UserGroup      UserGroup[]
@@ -46,8 +45,7 @@ model UserProfile {
   id          Int      @id @default(autoincrement())
   user        User     @relation(fields: [user_id], references: [id])
   user_id     Int      @unique
-  real_name   String?
-  major       String?
+  real_name   String
   create_time DateTime @default(now())
   update_time DateTime @updatedAt
 
@@ -136,7 +134,6 @@ model Problem {
   score              Int      @default(0)
   create_time        DateTime @default(now())
   update_time        DateTime @updatedAt
-
 
   ProblemTestcase ProblemTestcase[]
   ProblemTag      ProblemTag[]

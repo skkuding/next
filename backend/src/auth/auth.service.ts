@@ -1,4 +1,4 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common'
+import { CACHE_MANAGER, forwardRef, Inject, Injectable } from '@nestjs/common'
 import { JwtService, JwtVerifyOptions } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { User } from '@prisma/client'
@@ -22,9 +22,10 @@ import { JwtObject, JwtPayload, JwtTokens } from './interface/jwt.interface'
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
   ) {}
 
