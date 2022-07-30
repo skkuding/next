@@ -3,7 +3,7 @@ services:
   app:
     profiles: ['devcontainer']
     container_name: skkuding-dev
-    image: mcr.microsoft.com/vscode/devcontainers/typescript-node:16-bullseye
+    image: mcr.microsoft.com/vscode/devcontainers/typescript-node:18-bullseye
     volumes:
       - .:/workspace:cached
     command: sleep infinity
