@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   InternalServerErrorException,
   NotFoundException,
   Param,
@@ -10,7 +11,8 @@ import {
   Post,
   Req,
   UnprocessableEntityException,
-  UseGuards
+  UseGuards,
+  ForbiddenException
 } from '@nestjs/common'
 import { ContestService } from './contest.service'
 import { CreateContestDto } from './dto/create-contest.dto'
@@ -73,4 +75,49 @@ export class ContestAdminController {
       throw new InternalServerErrorException()
     }
   }
+
+  /* group admin page */
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getAdminContests(@Req() req: AuthenticatedRequest) {
+    try {
+      const contests = await this.contestService.getAdminContests(req.user.id)
+      return contests
+    } catch (error) {
+      throw new ForbiddenException(error.message)
+    }
+  }
+
+  @Get('ongoing')
+  @UseGuards(JwtAuthGuard)
+  async getAdminOngoingContests(@Req() req: AuthenticatedRequest) {
+    try {
+      const contests = await this.contestService.getAdminOngoingContests(
+        req.user.id
+      )
+      return contests
+    } catch (error) {
+      throw new ForbiddenException(error.message)
+    }
+  }
+
+  // @Get(':id')
+  // @UseGuards(JwtAuthGuard)
+  // async getAdminContestById(
+  //   @Req() req: AuthenticatedRequest,
+  //   @Param('id', ParseIntPipe) contestId: number
+  // ): Promise<Partial<Contest>> {
+  //   try {
+  //     const contests = await this.contestService.getAdminContestById(
+  //       req.user.id,
+  //       contestId
+  //     )
+  //     return contests
+  //   } catch (error) {
+  //     if (error instanceof EntityNotExistException) {
+  //       throw new NotFoundException(error.message)
+  //     }
+  //     throw new ForbiddenException(error.message)
+  //   }
+  // }
 }
