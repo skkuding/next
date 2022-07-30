@@ -112,11 +112,13 @@ importers:
   frontend:
     specifiers:
       '@iconify-json/fa6-brands': ^1.1.5
+      '@iconify-json/fa6-regular': ^1.1.5
       '@iconify-json/fa6-solid': ^1.1.6
       '@iconify-json/ri': ^1.1.3
       '@types/node': ^16.11.45
       '@vitejs/plugin-vue': ^2.3.3
       '@vue/tsconfig': ^0.1.3
+      '@vueuse/components': ^9.0.0
       '@vueuse/core': ^9.0.0
       autoprefixer: ^10.4.7
       histoire: ^0.8.4
@@ -131,12 +133,14 @@ importers:
       vue-router: ^4.1.2
       vue-tsc: ^0.39.0
     dependencies:
+      '@vueuse/components': 9.0.0_vue@3.2.37
       '@vueuse/core': 9.0.0_vue@3.2.37
       pinia: 2.0.17_j6bzmzd4ujpabbp5objtwxyjp4
       vue: 3.2.37
       vue-router: 4.1.2_vue@3.2.37
     devDependencies:
       '@iconify-json/fa6-brands': 1.1.5
+      '@iconify-json/fa6-regular': 1.1.5
       '@iconify-json/fa6-solid': 1.1.6
       '@iconify-json/ri': 1.1.3
       '@types/node': 16.11.45
@@ -654,6 +658,12 @@ packages:
 
   /@iconify-json/fa6-brands/1.1.5:
     resolution: {integrity: sha512-OjA1I8mVekC1i3iI8i7QwFhXr0eKnOW+hAjrMzrvrfM+Px1baTYQSH7mK3h9IR9oLh7c2KgYGcPJHo/Rb1xHlg==}
+    dependencies:
+      '@iconify/types': 1.1.0
+    dev: true
+
+  /@iconify-json/fa6-regular/1.1.5:
+    resolution: {integrity: sha512-u+BiFEHj9J3FfT4h7bxEkkCXE/B60UFz/M1JJhf7fwL3zSjqhptM6tH+35DWuNis+UEDZvV3x00yMaWrGke0iA==}
     dependencies:
       '@iconify/types': 1.1.0
     dev: true
@@ -1745,6 +1755,17 @@ packages:
     dependencies:
       '@types/node': 16.11.26
     dev: true
+
+  /@vueuse/components/9.0.0_vue@3.2.37:
+    resolution: {integrity: sha512-InXmxY31t45LjwleSXzE++ZQIJLgqpnbvc5kcWdtFEsU/XVe7RLZOqfb4Li69BaJIqXWQgX71IAqIyYPSoe8WA==}
+    dependencies:
+      '@vueuse/core': 9.0.0_vue@3.2.37
+      '@vueuse/shared': 9.0.0_vue@3.2.37
+      vue-demi: 0.12.5_vue@3.2.37
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+    dev: false
 
   /@vueuse/core/9.0.0_vue@3.2.37:
     resolution: {integrity: sha512-hMMc2ajuVknkL7Z39JdP9gFFND2OgnDTSS5mmuinWGAE1Vxy1AwDvTHm3+juyk+GzJjYRAktnBIPy7Fq53iOnw==}
