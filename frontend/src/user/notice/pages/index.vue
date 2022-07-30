@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import MyComponent from '../components/MyComponent.vue'
+// write script code
 </script>
 
 <template>
   <div>This is notice list page</div>
-  <MyComponent msg="notice list!" />
 </template>

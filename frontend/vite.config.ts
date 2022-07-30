@@ -12,11 +12,12 @@ export default defineConfig({
     icons({ autoInstall: true }),
     pages({
       pagesDir: [
-        { dir: 'src/home/pages', baseRoute: '' },
-        { dir: 'src/notice/pages', baseRoute: 'notice' },
-        { dir: 'src/problem/pages', baseRoute: 'problem' },
-        { dir: 'src/contest/pages', baseRoute: 'contest' },
-        { dir: 'src/group/pages', baseRoute: 'group' }
+        { dir: 'src/user/home/pages', baseRoute: '' },
+        { dir: 'src/user/notice/pages', baseRoute: 'notice' },
+        { dir: 'src/user/problem/pages', baseRoute: 'problem' },
+        { dir: 'src/user/contest/pages', baseRoute: 'contest' },
+        { dir: 'src/user/group/pages', baseRoute: 'group' },
+        { dir: 'src/manager/pages', baseRoute: 'manager' }
       ]
     })
   ],
