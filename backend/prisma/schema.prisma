@@ -80,36 +80,27 @@ model Group {
   create_time     DateTime @default(now())
   update_time     DateTime @updatedAt
 
-  UserGroup   UserGroup[]
-  GroupNotice GroupNotice[]
-  Problem     Problem[]
-  Contest     Contest[]
-  Workbook    Workbook[]
+  UserGroup UserGroup[]
+  Notice    Notice[]
+  Problem   Problem[]
+  Contest   Contest[]
+  Workbook  Workbook[]
 
   @@map("group")
-}
-
-model GroupNotice {
-  id        Int    @id @default(autoincrement())
-  group     Group  @relation(fields: [group_id], references: [id])
-  group_id  Int
-  notice    Notice @relation(fields: [notice_id], references: [id])
-  notice_id Int
-
-  @@map("group_notice")
 }
 
 model Notice {
   id            Int      @id @default(autoincrement())
   created_by    User     @relation(fields: [created_by_id], references: [id], onDelete: SetNull)
   created_by_id Int
+  group         Group    @relation(fields: [group_id], references: [id])
+  group_id      Int
+  title         String
   content       String
   visible       Boolean  @default(true)
-  top_fixed     Boolean  @default(false)
+  fixed         Boolean  @default(false)
   create_time   DateTime @default(now())
   update_time   DateTime @updatedAt
-
-  GroupNotice GroupNotice[]
 
   @@map("notice")
 }
