@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  InternalServerErrorException
+} from '@nestjs/common'
+import { EntityNotExistException } from 'src/common/exception/business.exception'
 import { GroupService } from '../group.service'
 
 @Injectable()
@@ -11,13 +17,17 @@ export class GroupMemberGuard implements CanActivate {
     const group_id: number = parseInt(request.params.group_id)
     const user_id: number = request.user.id
 
-    const userGroupMemberShipInfo =
-      await this.groupService.getUserGroupMembershipInfo(user_id, group_id)
-
-    if (!userGroupMemberShipInfo || !userGroupMemberShipInfo.is_registered) {
-      return false
+    try {
+      const userGroupMemberShipInfo =
+        await this.groupService.getUserGroupMembershipInfo(user_id, group_id)
+      if (userGroupMemberShipInfo.is_registered) {
+        return true
+      }
+    } catch (error) {
+      if (!(error instanceof EntityNotExistException)) {
+        throw new InternalServerErrorException()
+      }
     }
-
-    return true
+    return false
   }
 }

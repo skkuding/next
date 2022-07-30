@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 
 @Injectable()
@@ -10,7 +10,8 @@ export class UserService {
       where: { id: userId },
       select: {
         role: true
-      }
+      },
+      rejectOnNotFound: () => new UnauthorizedException()
     })
   }
 

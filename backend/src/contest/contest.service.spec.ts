@@ -139,7 +139,9 @@ describe('ContestService', () => {
 
     it('should throw error when the contest does not exist', async () => {
       //given
-      mockPrismaService.contest.findUnique.mockResolvedValue(null)
+      mockPrismaService.contest.findUnique.mockRejectedValue(
+        new EntityNotExistException('contest')
+      )
 
       //when
 
@@ -215,7 +217,9 @@ describe('ContestService', () => {
 
     it('should throw error when contest does not exist', async () => {
       //given
-      mockPrismaService.contest.findUnique.mockResolvedValue(null)
+      mockPrismaService.contest.findUnique.mockRejectedValue(
+        new EntityNotExistException('contest')
+      )
 
       //when
       const callContestDelete = async () =>

@@ -48,15 +48,12 @@ export class ContestService {
     contestId: number,
     contestDto: UpdateContestDto
   ): Promise<Contest> {
-    const contest: Contest = await this.prisma.contest.findUnique({
+    await this.prisma.contest.findUnique({
       where: {
         id: contestId
-      }
+      },
+      rejectOnNotFound: () => new EntityNotExistException('contest')
     })
-
-    if (!contest) {
-      throw new EntityNotExistException('contest')
-    }
 
     if (!this.isValidPeriod(contestDto.start_time, contestDto.end_time)) {
       throw new UnprocessableDataException(
@@ -64,7 +61,7 @@ export class ContestService {
       )
     }
 
-    const updated_contest: Contest = await this.prisma.contest.update({
+    return await this.prisma.contest.update({
       where: {
         id: contestId
       },
@@ -72,8 +69,6 @@ export class ContestService {
         ...contestDto
       }
     })
-
-    return updated_contest
   }
 
   isValidPeriod(startTime: Date, endTime: Date): boolean {
@@ -84,15 +79,12 @@ export class ContestService {
   }
 
   async deleteContest(contestId: number) {
-    const contest: Contest = await this.prisma.contest.findUnique({
+    await this.prisma.contest.findUnique({
       where: {
         id: contestId
-      }
+      },
+      rejectOnNotFound: () => new EntityNotExistException('contest')
     })
-
-    if (!contest) {
-      throw new EntityNotExistException('contest')
-    }
 
     await this.prisma.contest.delete({
       where: {

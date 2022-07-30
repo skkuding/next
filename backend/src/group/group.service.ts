@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { EntityNotExistException } from 'src/common/exception/business.exception'
 import { PrismaService } from 'src/prisma/prisma.service'
 
 @Injectable()
@@ -14,7 +15,8 @@ export class GroupService {
       select: {
         is_registered: true,
         is_group_manager: true
-      }
+      },
+      rejectOnNotFound: () => new EntityNotExistException('user_group')
     })
   }
 
